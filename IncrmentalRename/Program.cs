@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -6,14 +6,22 @@ class Program
 {
     static void Main(string[] args)
     {
-        if (args.Length == 0)
+        if (args.Length == 0 || args.Length > 2)
         {
             Console.WriteLine("Usage: [directoryPath] <dryrun>");
             return;
         }
 
         string directoryPath = args[0];
-        bool isDryRun = args.Length > 1 && args[1].ToLower() == "dryrun";
+        
+        // Check for the valid dryrun argument
+        if (args.Length == 2 && !(args[1].ToLower() == "yes" || args[1].ToLower() == "no"))
+        {
+            Console.WriteLine("Invalid argument for dryrun. Use 'yes' or 'no'.");
+            return;
+        }
+
+        bool isDryRun = args.Length > 1 && args[1].ToLower() == "yes";
 
         List<FileInfo> files1 = new List<FileInfo>();
         DirSearchAndRename(directoryPath, files1, Guid.NewGuid().ToString(), isDryRun);
@@ -55,7 +63,6 @@ class Program
 
             if (isDryRun)
             {
-                // In dry run mode, only print what would be done without actually renaming any files.
                 Console.WriteLine($"[DRY RUN] Would rename: {file.FullName} to {destFilePath}");
             }
             else
